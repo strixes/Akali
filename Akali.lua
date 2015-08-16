@@ -1,5 +1,5 @@
 if myHero.charName ~= "Akali" then return end
--- update basarili v2.0 --
+-- update basarili --
 -- LOCALLAR --
 
 -- AUTO UPDATE --
@@ -46,11 +46,21 @@ print("<b><font color=\"#6699FF\">Script Durumu:</font></b> <font color=\"#FFFFF
 print("<b><font color=\"#6699FF\">" ..myHero.name.. "</font></b> <font color=\"#FFFFFF\">ayip degil mi ak script kullaniyon.</font>")
 ts = TargetSelector(TARGET_LOW_HP_PRIORITY, 650)
 
+Ignite = { name = "summonerdot", range = 600, slot = nil }
+if myHero:GetSpellData(SUMMONER_1).name:find(Ignite.name) then
+		Ignite.slot = SUMMONER_1  
+	elseif myHero:GetSpellData(SUMMONER_2).name:find(Ignite.name) then
+		Ignite.slot = SUMMONER_2  
+	end
+
+killstring = {}
+
 Config = scriptConfig("Asil vs Akali", "")
 Config:addParam("lasthit", "Son Vurus", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("V"))
+
 Config:addParam("haras", "Auto Q + E", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("T"))
 Config:addParam("combo", "Tekleme Qeyf", SCRIPT_PARAM_ONKEYDOWN, false, string.byte(" "))
-Config:addParam("autoignite", "Auto Ignite", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("U"))
+Config:addParam("autoignite", "Auto Ignite - Toggle", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("U"))
 end
 
 function OnTick()
@@ -59,6 +69,7 @@ function OnTick()
 	 AutoQ()
 	 Kombo()
 	 AutoIgnite(unit)
+	 Igniteready = (Ignite.slot ~= nil and myHero:CanUseSpell(Ignite.slot) == READY)
 	 
 end
 
@@ -95,6 +106,36 @@ function AutoFarm()
 		end
 	end
 end
+
+-----------------
+
+function LaneClearMode()
+
+if (Config.laneclear) then
+	enemyMinions:update()
+		for i, minion in pairs(enemyMinions.objects) do
+			if minion ~= nil and ValidTarget(minion, Q.range) then
+				if Q.ready and Config.farm.q.clearQ then
+					if getDmg("Q", minion, myHero) >= minion.health then
+						CastSpell(_Q, minion)
+					else 
+						CastSpell(_Q, minion)
+					end
+				end
+				if ValidTarget(minion, E.range) and E.ready and Config.farm.e.clearE then
+					if getDmg("E", minion, myHero) >= minion.health then
+						CastSpell(_E, minion)
+					else
+						CastSpell(_E)
+				end
+			end
+		end
+	end
+end
+end
+
+
+-----------------
 
 	
 function AutoQ()
@@ -141,7 +182,51 @@ if (Config.combo) then
 end
 end
 
+--
 
+function DmgCalc()
+	for i=1, heroManager.iCount do
+		local enemy = heroManager:GetHero(i)
+			if enemy ~= nil and ValidTarget(enemy) then
+			local hp = enemy.health
+			local iDmg = (50 + (20 * myHero.level))
+			local qDmg = getDmg("Q", enemy, myHero)
+			local eDmg = getDmg("E", enemy, myHero)
+			local rDmg = getDmg("R", enemy, myHero)
+			if hp > (qDmg+eDmg+iDmg) then
+				killstring[enemy.networkID] = "Harass !"
+			elseif hp < qDmg then
+				killstring[enemy.networkID] = "Q ile Oldur!"
+			elseif hp < eDmg then
+				killstring[enemy.networkID] = "E ile Oldur!"
+			elseif hp < rDmg then
+				killstring[enemy.networkID] = "R ile Oldur!"
+            elseif hp < (iDmg) then
+                killstring[enemy.networkID] = "Tutustur Oldur!"
+			elseif hp < (qDmg+iDmg) then
+				killstring[enemy.networkID] = "Q+Tutustur Oldur!"
+			elseif hp < (eDmg+iDmg) then
+				killstring[enemy.networkID] = "E+Tutustur Oldur!"
+			elseif hp < (rDmg+iDmg) then
+				killstring[enemy.networkID] = "R+Tutustur Oldur!"
+			elseif hp < (qDmg+eDmg) then
+                killstring[enemy.networkID] = "Q+E Oldur!"
+			elseif hp < (qDmg+rDmg) then
+				killstring[enemy.networkID] = "Q+R Oldur!"
+			elseif hp < (eDmg+rDmg) then
+				killstring[enemy.networkID] = "E+R Oldur!"
+			elseif hp < (qDmg+eDmg+rDmg) then
+				killstring[enemy.networkID] = "Q+E+R Oldur!"
+			elseif hp < (qDmg+eDmg+iDmg) then
+                killstring[enemy.networkID] = "Q+E+T Oldur!"
+			elseif hp < (qDmg+eDmg+rDmg+iDmg) then
+				killstring[enemy.networkID] = "Q+E+R+T Oldur!"
+			end
+		end
+	end
+end
+
+--
 
 function AutoIgnite(unit)
 if (Config.autoignite) then
@@ -156,10 +241,21 @@ end
 function OnDraw()
 
 		DrawCircle3D(myHero.x, myHero.y, myHero.z, 650)
-		if (myHero.health < 400) then
-			DrawText("Uyari: Dusuk HP! Olme ihtimalin yuksek!", 25, 200, 100, 0xFFFF0000)
+		if (myHero.health < 300) then
+			DrawText("Uyari: Dusuk HP! Olme ihtimalin yuksek!", 20, 150, 100, 0xFFFF0000)
 		end
-		if (myHero.mana < 200) then 
-			DrawText("Uyari: Dusuk enerji! Kombo icin suanda yeterli enerjin yok!", 25, 200, 130, 0xFFFFFF00)
+		if (myHero.mana < 115) and (myHero.level >= 6) and not (myHero.level >= 13) then 
+			DrawText("Uyari: Dusuk enerji! Kombo icin suanda yeterli enerjin yok!", 20, 150, 130, 0xFFFFFF00)
 		end
+		if (myHero.mana < 100) and (myHero.level >= 13) then 
+			DrawText("Uyari: Dusuk enerji! Kombo icin suanda yeterli enerjin yok!", 20, 150, 130, 0xFFFFFF00)
+		end
+		
+			DmgCalc()
+			for _, enemy in ipairs(GetEnemyHeroes()) do
+				if ValidTarget(enemy, 100000) and killstring[enemy.networkID] ~= nil then
+					local pos = WorldToScreen(D3DXVECTOR3(enemy.x, enemy.y, enemy.z))
+					DrawText(killstring[enemy.networkID], 20, pos.x - 35, pos.y - 40, 0xFFFFFF00)
+				end
+			end
 end
