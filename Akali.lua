@@ -143,7 +143,6 @@ if (Config.combo) then
             end
         end	
 end
-end
 
 
 
