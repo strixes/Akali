@@ -1,9 +1,9 @@
 if myHero.charName ~= "Akali" then return end
--- update basarili v0.2--
+-- update basarili v2.0 --
 -- LOCALLAR --
 
 -- AUTO UPDATE --
-_G.AUTOUPDATE = false -- Change to "false" to disable auto updates!
+_G.AUTOUPDATE = true -- Change to "false" to disable auto updates!
 
 local version = "0.2"
 local author = "strixes"
@@ -42,26 +42,24 @@ local R = {name = "Shadow Dance", range = 700, ready = function() return myHero:
 
 function OnLoad()
 
-print("<b><font color=\"#6699FF\">Script Durumu:</font></b> <font color=\"#FFFFFF\">Calisiyor baby.</font>")
-print("<b><font color=\"#6699FF\">" ..myHero.name.. "</font></b> <font color=\"#FFFFFF\">ayip degil mi ak script aciyon.</font>")
+print("<b><font color=\"#6699FF\">Script Durumu:</font></b> <font color=\"#FFFFFF\">Akali script aktif!</font>")
+print("<b><font color=\"#6699FF\">" ..myHero.name.. "</font></b> <font color=\"#FFFFFF\">ayip degil mi ak script kullaniyon.</font>")
 ts = TargetSelector(TARGET_LOW_HP_PRIORITY, 650)
 
 Config = scriptConfig("Asil vs Akali", "")
 Config:addParam("lasthit", "Son Vurus", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("V"))
 Config:addParam("haras", "Auto Q + E", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("T"))
 Config:addParam("combo", "Tekleme Qeyf", SCRIPT_PARAM_ONKEYDOWN, false, string.byte(" "))
+Config:addParam("autoignite", "Auto Ignite", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("U"))
 end
 
 function OnTick()
+
      AutoFarm()
 	 AutoQ()
 	 Kombo()
 	 AutoIgnite(unit)
 	 
-	 --
-	 -- Get the current time to use it in time based calculations
-    
-	--
 end
 
 for i, enemy in ipairs(GetEnemyHeroes()) do
@@ -112,8 +110,6 @@ if (Config.haras) then
 					end
 					if GetDistance(enemy) <= E.range and (myHero:CanUseSpell(_E) == READY) then
 					CastSpell(_E)
-					else		
-					moveToCursor() 
 					end
             end
         end
@@ -143,25 +139,27 @@ if (Config.combo) then
             end
         end	
 end
+end
 
 
 
 function AutoIgnite(unit)
+if (Config.autoignite) then
 	if ValidTarget(unit, 600) and unit.health <= 50 + (20 * myHero.level) then
 		if Igniteready then
 			CastSpell(Ignite.slot, unit)
 		end
 	end
 end
+end
 
 function OnDraw()
 
 		DrawCircle3D(myHero.x, myHero.y, myHero.z, 650)
-		if (myHero.health < 200) then
-			DrawText("Warning: LOW HP! Drink a Health Potion!", 18, 100, 100, 0xFFFF0000)
+		if (myHero.health < 400) then
+			DrawText("Uyari: Dusuk HP! Olme ihtimalin yuksek!", 25, 200, 100, 0xFFFF0000)
 		end
-		if (myHero.mana < 150) then 
-			DrawText("Warning: LOW MP! Drink a Mana Potion!", 18, 100, 120, 0xFFFFFF00)
+		if (myHero.mana < 200) then 
+			DrawText("Uyari: Dusuk enerji! Kombo icin suanda yeterli enerjin yok!", 25, 200, 130, 0xFFFFFF00)
 		end
-end
 end
