@@ -60,7 +60,7 @@ Config:addParam("lasthit", "Son Vurus", SCRIPT_PARAM_ONKEYDOWN, false, string.by
 
 Config:addParam("haras", "Auto Q + E", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("T"))
 Config:addParam("combo", "Tekleme Qeyf", SCRIPT_PARAM_ONKEYDOWN, false, string.byte(" "))
-Config:addParam("autoignite", "Auto Ignite - Toggle", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("U"))
+Config:addParam("autoignite", "Auto Ignite", SCRIPT_PARAM_ONOFF, true)
 end
 
 function OnTick()
@@ -240,16 +240,26 @@ end
 
 function OnDraw()
 
-		DrawCircle3D(myHero.x, myHero.y, myHero.z, 650)
-		if (myHero.health < 300) then
+
+		if (myHero.level < 6) and not (myHero.dead) then
+		DrawCircle3D(myHero.x, myHero.y, myHero.z, 550)
+		else
+		DrawCircle(myHero.x, myHero.y, myHero.z, 700, 0xFFFF0000)
+		DrawCircle3D(myHero.x, myHero.y, myHero.z, 550)
+		end
+		if (myHero.health < 400) and not (myHero.dead) then
 			DrawText("Uyari: Dusuk HP! Olme ihtimalin yuksek!", 20, 150, 100, 0xFFFF0000)
 		end
-		if (myHero.mana < 115) and (myHero.level >= 6) and not (myHero.level >= 13) then 
+		if (myHero.mana < 120) and (myHero.level <= 12) and not (myHero.dead) then 
 			DrawText("Uyari: Dusuk enerji! Kombo icin suanda yeterli enerjin yok!", 20, 150, 130, 0xFFFFFF00)
 		end
-		if (myHero.mana < 100) and (myHero.level >= 13) then 
+		if (myHero.mana < 100) and (myHero.level >= 13) and not (myHero.dead) then 
 			DrawText("Uyari: Dusuk enerji! Kombo icin suanda yeterli enerjin yok!", 20, 150, 130, 0xFFFFFF00)
 		end
+		if (myHero.dead) then
+			DrawText("WASTED", 50, 750, 170, 0xFFFF0000)
+		end
+		
 		
 			DmgCalc()
 			for _, enemy in ipairs(GetEnemyHeroes()) do
