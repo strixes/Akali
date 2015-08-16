@@ -1,9 +1,9 @@
 if myHero.charName ~= "Akali" then return end
--- update basarili --
+-- update basarili v0.2--
 -- LOCALLAR --
 
 -- AUTO UPDATE --
-_G.AUTOUPDATE = true -- Change to "false" to disable auto updates!
+_G.AUTOUPDATE = false -- Change to "false" to disable auto updates!
 
 local version = "0.2"
 local author = "strixes"
@@ -163,4 +163,5 @@ function OnDraw()
 		if (myHero.mana < 150) then 
 			DrawText("Warning: LOW MP! Drink a Mana Potion!", 18, 100, 120, 0xFFFFFF00)
 		end
+end
 end
