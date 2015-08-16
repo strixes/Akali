@@ -1,11 +1,11 @@
 if myHero.charName ~= "Akali" then return end
-
+-- update basarili --
 -- LOCALLAR --
 
 -- AUTO UPDATE --
 _G.AUTOUPDATE = true -- Change to "false" to disable auto updates!
 
-local version = "0.1"
+local version = "0.2"
 local author = "strixes"
 local UPDATE_HOST = "raw.github.com"
 local UPDATE_PATH = "/strixes/BoL/master/Akali.lua".."?rand="..math.random(1,10000)
