@@ -3,31 +3,31 @@ if myHero.charName ~= "Akali" then return end
 -- LOCALLAR --
 
 -- AUTO UPDATE --
-_G.AUTOUPDATE = false -- Change to "false" to disable auto updates!
+_G.AUTOUPDATE = true -- Change to "false" to disable auto updates!
 
-local version = "0.2"
-local author = "STRIXES"
+local version = "0.1"
+local author = "strixes"
 local UPDATE_HOST = "raw.github.com"
-local UPDATE_PATH = "/Kn0wM3/BoLScripts/master/Akali Elo Shower.lua".."?rand="..math.random(1,10000)
+local UPDATE_PATH = "/strixes/BoL/master/Akali.lua".."?rand="..math.random(1,10000)
 local UPDATE_FILE_PATH = SCRIPT_PATH..GetCurrentEnv().FILE_NAME
 local UPDATE_URL = "https://"..UPDATE_HOST..UPDATE_PATH
-function AutoupdaterMsg(msg) print("<font color=\"#FF0000\"><b>Akali Elo Shower:</b></font> <font color=\"#FFFFFF\">"..msg..".</font>") end
-	local ServerData = GetWebResult(UPDATE_HOST, "/Kn0wM3/BoLScripts/master/Akali%20Elo%20Shower.Version")
+function AutoupdaterMsg(msg) print("<font color=\"#FF0000\"><b>STRiX's Akali:</b></font> <font color=\"#FFFFFF\">"..msg..".</font>") end
+	local ServerData = GetWebResult(UPDATE_HOST, "/strixes/BoL/master/Akali.Version")
 	if ServerData then
 		ServerVersion = type(tonumber(ServerData)) == "number" and tonumber(ServerData) or nil
 		if ServerVersion then
 			if tonumber(version) < ServerVersion then
-				AutoupdaterMsg("New version available "..ServerVersion)
+				AutoupdaterMsg("Guncelleme bulundu. "..ServerVersion)
 				if _G.AUTOUPDATE then
-					AutoupdaterMsg("Updating, please don't press F9")
-					DelayAction(function() DownloadFile(UPDATE_URL, UPDATE_FILE_PATH, function () AutoupdaterMsg("Successfully updated. ("..version.." => "..ServerVersion.."), press F9 twice to load the updated version.") end) end, 3)
-				else AutoupdaterMsg("New Version found ("..ServerVersion..") Enable AutoUpdate or download manually!")
+					AutoupdaterMsg("Indiriliyor, lutfen F9 'a henuz basmayin.")
+					DelayAction(function() DownloadFile(UPDATE_URL, UPDATE_FILE_PATH, function () AutoupdaterMsg("Guncelleme basarili. ("..version.." => "..ServerVersion.."), Yeni versiyonu aktif etmek icin 2 kere F9'a basin.") end) end, 3)
+				else AutoupdaterMsg("Guncelleme bulundu ("..ServerVersion..") Enable AutoUpdate or download manually!")
 				end
 				else 
-					AutoupdaterMsg("You have got the latest version ("..ServerVersion..")")
+					AutoupdaterMsg("Son surumu kullanıyorsunuz. "..ServerVersion.."")
 				end
 		else
-			AutoupdaterMsg("Error downloading version info")
+			AutoupdaterMsg("Guncelleme hatasi!")
 	end
 end
 -- UPDATE SON --
@@ -56,6 +56,7 @@ function OnTick()
      AutoFarm()
 	 AutoQ()
 	 Kombo()
+	 AutoIgnite(unit)
 	 
 	 --
 	 -- Get the current time to use it in time based calculations
@@ -140,14 +141,10 @@ if (Config.combo) then
                     CastSpell(_W, myHero.x, myHero.z)
             end
             end
-        end
-		else		
-					moveToCursor() 
-					end
-    
-	
+        end	
 end
 end
+
 
 
 function AutoIgnite(unit)
