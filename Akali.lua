@@ -36,6 +36,7 @@ local R = {name = "Shadow Dance", range = 700, ready = function() return myHero:
 
 local GapCloserList = {
 	{charName = "Aatrox", spellName = "AatroxQ", name = "Q"},
+	{charName = "Ashe", spellName = "AsheR", name = "R"},
 	{charName = "Akali", spellName = "AkaliShadowDance", name = "R"},
 	{charName = "Alistar", spellName = "Headbutt", name = "W"},
 	{charName = "Amumu", spellName = "BandageToss", name = "Q"},
@@ -303,33 +304,33 @@ function DmgCalc()
 			local eDmg = getDmg("E", enemy, myHero)
 			local rDmg = getDmg("R", enemy, myHero)
 			if hp > (qDmg+eDmg+iDmg) then
-				killstring[enemy.networkID] = "Harass Him!!!"
+				killstring[enemy.networkID] = "Harass Him"
 			elseif hp < qDmg then
-				killstring[enemy.networkID] = "Q Kill!"
+				killstring[enemy.networkID] = "Q Kill"
 			elseif hp < eDmg then
-				killstring[enemy.networkID] = "E Kill!"
+				killstring[enemy.networkID] = "E Kill"
 			elseif hp < rDmg then
-				killstring[enemy.networkID] = "R Kill!"
+				killstring[enemy.networkID] = "R Kill"
             elseif hp < (iDmg) then
-                killstring[enemy.networkID] = "Ignite Kill!"
+                killstring[enemy.networkID] = "Ignite Kill"
 			elseif hp < (qDmg+iDmg) then
-				killstring[enemy.networkID] = "Q+Ignite Kill!"
+				killstring[enemy.networkID] = "Q+Ignite Kill"
 			elseif hp < (eDmg+iDmg) then
-				killstring[enemy.networkID] = "E+Ignite Kill!"
+				killstring[enemy.networkID] = "E+Ignite Kill"
 			elseif hp < (rDmg+iDmg) then
-				killstring[enemy.networkID] = "R+Ignite Kill!"
+				killstring[enemy.networkID] = "R+Ignite Kill"
 			elseif hp < (qDmg+eDmg) then
-                killstring[enemy.networkID] = "Q+E Kill!"
+                killstring[enemy.networkID] = "Q+E Kill"
 			elseif hp < (qDmg+rDmg) then
-				killstring[enemy.networkID] = "Q+R Kill!"
+				killstring[enemy.networkID] = "Q+R Kill"
 			elseif hp < (eDmg+rDmg) then
-				killstring[enemy.networkID] = "E+R Kill!"
+				killstring[enemy.networkID] = "E+R Kill"
 			elseif hp < (qDmg+eDmg+rDmg) then
-				killstring[enemy.networkID] = "Q+E+R Kill!"
+				killstring[enemy.networkID] = "Q+E+R Kill"
 			elseif hp < (qDmg+eDmg+iDmg) then
-                killstring[enemy.networkID] = "Q+E+Ignite Kill!"
+                killstring[enemy.networkID] = "Q+E+Ignite Kill"
 			elseif hp < (qDmg+eDmg+rDmg+iDmg) then
-				killstring[enemy.networkID] = "Q+E+R+Ignite Kill!"
+				killstring[enemy.networkID] = "Q+E+R+Ignite Kill"
 			end
 		end
 	end
@@ -732,7 +733,7 @@ function OnDraw()
 			for _, enemy in ipairs(GetEnemyHeroes()) do
 				if ValidTarget(enemy, 100000) and killstring[enemy.networkID] ~= nil then
 					local pos = WorldToScreen(D3DXVECTOR3(enemy.x, enemy.y, enemy.z))
-					DrawText(killstring[enemy.networkID], 20, pos.x - 35, pos.y - 40, 0xFFFFFF00)
+					DrawText(killstring[enemy.networkID], 18, pos.x - 35, pos.y - 40, 0xFFFFFF00)
 				end
 			end
 end
